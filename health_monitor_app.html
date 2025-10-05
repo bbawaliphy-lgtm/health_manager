@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Personal Health Monitor - Track medical tests for you and your family">
+    <meta name="theme-color" content="#2563eb">
+    <title>Personal Health Monitor of Biplab Bawali</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .profile-selector {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255,255,255,0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+        }
+
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--card-bg);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        nav {
+            background: white;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 88px;
+            z-index: 99;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .content {
+            padding: 2rem 0;
+            min-height: calc(100vh - 300px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .parameter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .parameter-item {
+            border: 2px solid var(--border);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background: var(--bg);
+        }
+
+        .parameter-item.normal {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+        .parameter-item.abnormal {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.05);
+        }
+
+        .parameter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .parameter-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .parameter-range {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .test-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .test-item {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .test-item:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .test-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .test-date {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .test-summary {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+
+        .test-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-light);
+            line-height: 1;
+        }
+
+        .family-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .family-card {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .family-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .family-card.active {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .family-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+        }
+
+        .reminder-item {
+            background: var(--card-bg);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .reminder-item.overdue {
+            border-left-color: var(--danger);
+        }
+
+        .reminder-item.upcoming {
+            border-left-color: var(--warning);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.25rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .nav-tabs {
+                gap: 0.5rem;
+            }
+
+            .nav-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .parameter-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        .chart-container {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--card-bg);
+            border-radius: 0.5rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar input,
+        .filter-bar select {
+            flex: 1;
+            min-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>🏥 Personal Health Monitor</h1>
+                    <p style="font-size: 0.9rem; opacity: 0.9;">Track your family's health journey</p>
+                </div>
+                <div class="profile-selector" onclick="switchTab('profiles')">
+                    <div class="profile-avatar" id="headerAvatar">?</div>
+                    <div>
+                        <div style="font-size: 0.75rem; opacity: 0.8;">Active Profile</div>
+                        <div id="headerProfileName" style="font-weight: 600;">Select Profile</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+                <button class="nav-tab" onclick="switchTab('tests')">🔬 Tests</button>
+                <button class="nav-tab" onclick="switchTab('history')">📜 History</button>
+                <button class="nav-tab" onclick="switchTab('reminders')">⏰ Reminders</button>
+                <button class="nav-tab" onclick="switchTab('profiles')">👥 Profiles</button>
+                <button class="nav-tab" onclick="switchTab('backup')">💾 Backup</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content container">
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Tests</div>
+                    <div class="stat-value" id="totalTests">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div class="stat-label">This Month</div>
+                    <div class="stat-value" id="monthTests">0</div>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <div class="stat-label">Upcoming Reminders</div>
+                    <div class="stat-value" id="upcomingReminders">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Recent Tests</div>
+                <div id="recentTests"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Upcoming Reminders</div>
+                <div id="dashboardReminders"></div>
+            </div>
+        </div>
+
+        <!-- Tests Tab -->
+        <div id="tests" class="tab-content">
+            <div class="card">
+                <div class="card-header">Add New Test</div>
+                <button class="btn btn-primary" onclick="showAddTestModal()">+ Add New Test</button>
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-content">
+            <div class="card">
+                <div class="card-header">Test History</div>
+                <div class="filter-bar">
+                    <input type="text" id="searchTests" placeholder="Search tests..." onkeyup="filterHistory()">
+                    <select id="filterTestType" onchange="filterHistory()">
+                        <option value="">All Test Types</option>
+                    </select>
+                    <input type="date" id="filterFromDate" onchange="filterHistory()">
+                    <input type="date" id="filterToDate" onchange="filterHistory()">
+                </div>
+                <div id="historyList" class="test-list"></div>
+            </div>
+        </div>
+
+        <!-- Reminders Tab -->
+        <div id="reminders" class="tab-content">
+            <div class="card">
+                <div class="card-header">Test Reminders</div>
+                <button class="btn btn-primary" onclick="showAddReminderModal()">+ Add Reminder</button>
+                <div id="remindersList" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
+
+        <!-- Profiles Tab -->
+        <div id="profiles" class="tab-content">
+            <div class="card">
+                <div class="card-header">Family Members</div>
+                <button class="btn btn-primary" onclick="showAddProfileModal()">+ Add Family Member</button>
+                <div id="profilesList" class="family-grid" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
+
+        <!-- Backup Tab -->
+        <div id="backup" class="tab-content">
+            <div class="card">
+                <div class="card-header">Backup & Restore</div>
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="exportData()">📥 Export All Data</button>
+                    <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">📤 Import Data</button>
+                    <button class="btn btn-secondary" onclick="exportPDF()">📄 Export as PDF</button>
+                </div>
+                <input type="file" id="importFile" accept=".json" onchange="importData()" style="display: none;">
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Profile Modal -->
+    <div id="addProfileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Family Member</h2>
+                <button class="close-btn" onclick="closeModal('addProfileModal')">&times;</button>
+            </div>
+            <form onsubmit="saveProfile(event)">
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="profileName" required>
+                </div>
+                <div class="form-group">
+                    <label>Date of Birth *</label>
+                    <input type="date" id="profileDob" required>
+                </div>
+                <div class="form-group">
+                    <label>Gender *</label>
+                    <select id="profileGender" required>
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Blood Group</label>
+                    <select id="profileBloodGroup">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Save Profile</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addProfileModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Test Modal -->
+    <div id="addTestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Test</h2>
+                <button class="close-btn" onclick="closeModal('addTestModal')">&times;</button>
+            </div>
+            <form onsubmit="saveTest(event)">
+                <div class="form-group">
+                    <label>Test Type *</label>
+                    <select id="testType" required onchange="loadTestParameters()">
+                        <option value="">Select Test Type</option>
+                        <option value="CBC">Complete Blood Count (CBC)</option>
+                        <option value="LFT">Liver Function Test (LFT)</option>
+                        <option value="KFT">Kidney Function Test (KFT)</option>
+                        <option value="Lipid">Lipid Profile</option>
+                        <option value="Thyroid">Thyroid Profile</option>
+                        <option value="BloodSugar">Blood Sugar</option>
+                        <option value="BloodPressure">Blood Pressure</option>
+                        <option value="BodyMetrics">Body Metrics</option>
+                        <option value="Vitamins">Vitamins</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Test Date *</label>
+                    <input type="date" id="testDate" required>
+                </div>
+                <div id="testParameters" class="parameter-grid"></div>
+                <div class="form-group">
+                    <label>Upload Report (Optional)</label>
+                    <div class="file-upload" onclick="document.getElementById('testReport').click()">
+                        <input type="file" id="testReport" accept="image/*,application/pdf">
+                        <p>📎 Click to upload report (Image/PDF)</p>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Save Test</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addTestModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Reminder Modal -->
+    <div id="addReminderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Reminder</h2>
+                <button class="close-btn" onclick="closeModal('addReminderModal')">&times;</button>
+            </div>
+            <form onsubmit="saveReminder(event)">
+                <div class="form-group">
+                    <label>Test Name *</label>
+                    <input type="text" id="reminderTest" required>
+                </div>
+                <div class="form-group">
+                    <label>Date *</label>
+                    <input type="date" id="reminderDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Frequency</label>
+                    <select id="reminderFrequency">
+                        <option value="once">One Time</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Save Reminder</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addReminderModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Test Modal -->
+    <div id="viewTestModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="viewTestTitle">Test Details</h2>
+                <button class="close-btn" onclick="closeModal('viewTestModal')">&times;</button>
+            </div>
+            <div id="viewTestContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure
+        const testDefinitions = {
+            CBC: {
+                name: 'Complete Blood Count',
+                parameters: {
+                    hemoglobin: { name: 'Hemoglobin', unit: 'g/dL', range: '13.5-17.5 (M), 12.0-15.5 (F)' },
+                    rbc: { name: 'RBC Count', unit: 'million/µL', range: '4.5-5.5 (M), 4.0-5.0 (F)' },
+                    wbc: { name: 'WBC Count', unit: 'thousand/µL', range: '4.0-11.0' },
+                    platelets: { name: 'Platelets', unit: 'thousand/µL', range: '150-400' },
+                    hematocrit: { name: 'Hematocrit', unit: '%', range: '40-54 (M), 36-48 (F)' },
+                    mcv: { name: 'MCV', unit: 'fL', range: '80-100' },
+                    mch: { name: 'MCH', unit: 'pg', range: '27-33' },
+                    mchc: { name: 'MCHC', unit: 'g/dL', range: '32-36' }
+                }
+            },
+            LFT: {
+                name: 'Liver Function Test',
+                parameters: {
+                    sgot: { name: 'SGOT/AST', unit: 'U/L', range: '5-40' },
+                    sgpt: { name: 'SGPT/ALT', unit: 'U/L', range: '7-56' },
+                    totalBilirubin: { name: 'Total Bilirubin', unit: 'mg/dL', range: '0.3-1.2' },
+                    directBilirubin: { name: 'Direct Bilirubin', unit: 'mg/dL', range: '0.0-0.3' },
+                    indirectBilirubin: { name: 'Indirect Bilirubin', unit: 'mg/dL', range: '0.2-0.8' },
+                    alkalinePhosphatase: { name: 'Alkaline Phosphatase', unit: 'U/L', range: '44-147' },
+                    totalProtein: { name: 'Total Protein', unit: 'g/dL', range: '6.0-8.3' },
+                    albumin: { name: 'Albumin', unit: 'g/dL', range: '3.5-5.5' },
+                    globulin: { name: 'Globulin', unit: 'g/dL', range: '2.0-3.5' },
+                    agRatio: { name: 'A/G Ratio', unit: '', range: '1.0-2.0' }
+                }
+            },
+            KFT: {
+                name: 'Kidney Function Test',
+                parameters: {
+                    urea: { name: 'Urea', unit: 'mg/dL', range: '15-40' },
+                    creatinine: { name: 'Creatinine', unit: 'mg/dL', range: '0.6-1.2' },
+                    uricAcid: { name: 'Uric Acid', unit: 'mg/dL', range: '3.5-7.2' },
+                    bun: { name: 'BUN', unit: 'mg/dL', range: '7-20' },
+                    sodium: { name: 'Sodium', unit: 'mEq/L', range: '135-145' },
+                    potassium: { name: 'Potassium', unit: 'mEq/L', range: '3.5-5.0' },
+                    chloride: { name: 'Chloride', unit: 'mEq/L', range: '96-106' },
+                    calcium: { name: 'Calcium', unit: 'mg/dL', range: '8.5-10.5' }
+                }
+            },
+            Lipid: {
+                name: 'Lipid Profile',
+                parameters: {
+                    totalCholesterol: { name: 'Total Cholesterol', unit: 'mg/dL', range: '<200' },
+                    ldl: { name: 'LDL', unit: 'mg/dL', range: '<100' },
+                    hdl: { name: 'HDL', unit: 'mg/dL', range: '>40' },
+                    vldl: { name: 'VLDL', unit: 'mg/dL', range: '<30' },
+                    triglycerides: { name: 'Triglycerides', unit: 'mg/dL', range: '<150' },
+                    tcHdlRatio: { name: 'TC/HDL Ratio', unit: '', range: '<5' },
+                    ldlHdlRatio: { name: 'LDL/HDL Ratio', unit: '', range: '<3' }
+                }
+            },
+            Thyroid: {
+                name: 'Thyroid Profile',
+                parameters: {
+                    t3: { name: 'T3', unit: 'ng/dL', range: '80-200' },
+                    t4: { name: 'T4', unit: 'µg/dL', range: '5.0-12.0' },
+                    tsh: { name: 'TSH', unit: 'µIU/mL', range: '0.4-4.0' },
+                    freeT3: { name: 'Free T3', unit: 'pg/mL', range: '2.3-4.2' },
+                    freeT4: { name: 'Free T4', unit: 'ng/dL', range: '0.8-1.8' }
+                }
+            },
+            BloodSugar: {
+                name: 'Blood Sugar',
+                parameters: {
+                    fasting: { name: 'Fasting', unit: 'mg/dL', range: '70-100' },
+                    random: { name: 'Random', unit: 'mg/dL', range: '70-140' },
+                    postPrandial: { name: 'Post Prandial', unit: 'mg/dL', range: '<140' },
+                    hba1c: { name: 'HbA1c', unit: '%', range: '4.0-5.6' }
+                }
+            },
+            BloodPressure: {
+                name: 'Blood Pressure',
+                parameters: {
+                    systolic: { name: 'Systolic', unit: 'mmHg', range: '90-120' },
+                    diastolic: { name: 'Diastolic', unit: 'mmHg', range: '60-80' },
+                    pulse: { name: 'Pulse Rate', unit: 'bpm', range: '60-100' }
+                }
+            },
+            BodyMetrics: {
+                name: 'Body Metrics',
+                parameters: {
+                    weight: { name: 'Weight', unit: 'kg', range: 'Variable' },
+                    height: { name: 'Height', unit: 'cm', range: 'Variable' },
+                    bmi: { name: 'BMI', unit: 'kg/m²', range: '18.5-24.9' },
+                    bodyFat: { name: 'Body Fat %', unit: '%', range: '10-20 (M), 20-30 (F)' }
+                }
+            },
+            Vitamins: {
+                name: 'Vitamins',
+                parameters: {
+                    vitaminD: { name: 'Vitamin D', unit: 'ng/mL', range: '30-100' },
+                    vitaminB12: { name: 'Vitamin B12', unit: 'pg/mL', range: '200-900' },
+                    folicAcid: { name: 'Folic Acid', unit: 'ng/mL', range: '2.7-17.0' },
+                    iron: { name: 'Iron', unit: 'µg/dL', range: '60-170' },
+                    ferritin: { name: 'Ferritin', unit: 'ng/mL', range: '12-300' }
+                }
+            }
+        };
+
+        // Initialize data storage
+        let profiles = JSON.parse(localStorage.getItem('healthProfiles') || '[]');
+        let activeProfile = localStorage.getItem('activeProfile') || null;
+        let tests = JSON.parse(localStorage.getItem('healthTests') || '{}');
+        let reminders = JSON.parse(localStorage.getItem('healthReminders') || '[]');
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProfiles();
+            updateDashboard();
+            loadHistory();
+            loadReminders();
+            populateTestTypeFilter();
+            setTodayDate();
+        });
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('testDate').value = today;
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'history') loadHistory();
+            if (tabName === 'reminders') loadReminders();
+            if (tabName === 'profiles') loadProfiles();
+            if (tabName === 'dashboard') updateDashboard();
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showAddProfileModal() {
+            document.getElementById('profileName').value = '';
+            document.getElementById('profileDob').value = '';
+            document.getElementById('profileGender').value = '';
+            document.getElementById('profileBloodGroup').value = '';
+            showModal('addProfileModal');
+        }
+
+        function showAddTestModal() {
+            if (!activeProfile) {
+                alert('Please select or create a profile first!');
+                switchTab('profiles');
+                return;
+            }
+            document.getElementById('testType').value = '';
+            document.getElementById('testParameters').innerHTML = '';
+            showModal('addTestModal');
+        }
+
+        function showAddReminderModal() {
+            if (!activeProfile) {
+                alert('Please select or create a profile first!');
+                switchTab('profiles');
+                return;
+            }
+            document.getElementById('reminderTest').value = '';
+            document.getElementById('reminderDate').value = '';
+            document.getElementById('reminderFrequency').value = 'once';
+            showModal('addReminderModal');
+        }
+
+        function saveProfile(event) {
+            event.preventDefault();
+            const profile = {
+                id: Date.now().toString(),
+                name: document.getElementById('profileName').value,
+                dob: document.getElementById('profileDob').value,
+                gender: document.getElementById('profileGender').value,
+                bloodGroup: document.getElementById('profileBloodGroup').value
+            };
+            
+            profiles.push(profile);
+            localStorage.setItem('healthProfiles', JSON.stringify(profiles));
+            
+            if (!activeProfile) {
+                activeProfile = profile.id;
+                localStorage.setItem('activeProfile', activeProfile);
+            }
+            
+            closeModal('addProfileModal');
+            loadProfiles();
+            updateHeader();
+        }
+
+        function loadProfiles() {
+            const container = document.getElementById('profilesList');
+            if (profiles.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👤</div><p>No family members added yet</p></div>';
+                return;
+            }
+            
+            container.innerHTML = profiles.map(profile => {
+                const age = calculateAge(profile.dob);
+                const initials = profile.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                return `
+                    <div class="family-card ${profile.id === activeProfile ? 'active' : ''}" onclick="selectProfile('${profile.id}')">
+                        <div class="family-avatar">${initials}</div>
+                        <h3>${profile.name}</h3>
+                        <p style="color: var(--text-light); font-size: 0.875rem;">
+                            ${age} years • ${profile.gender}<br>
+                            ${profile.bloodGroup || 'Blood group not set'}
+                        </p>
+                        <button class="btn btn-danger btn-sm" onclick="deleteProfile(event, '${profile.id}')" style="margin-top: 0.5rem;">Delete</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function selectProfile(profileId) {
+            activeProfile = profileId;
+            localStorage.setItem('activeProfile', activeProfile);
+            loadProfiles();
+            updateHeader();
+            updateDashboard();
+        }
+
+        function deleteProfile(event, profileId) {
+            event.stopPropagation();
+            if (confirm('Are you sure you want to delete this profile? All test data will be lost.')) {
+                profiles = profiles.filter(p => p.id !== profileId);
+                delete tests[profileId];
+                localStorage.setItem('healthProfiles', JSON.stringify(profiles));
+                localStorage.setItem('healthTests', JSON.stringify(tests));
+                
+                if (activeProfile === profileId) {
+                    activeProfile = profiles.length > 0 ? profiles[0].id : null;
+                    localStorage.setItem('activeProfile', activeProfile);
+                }
+                
+                loadProfiles();
+                updateHeader();
+                updateDashboard();
+            }
+        }
+
+        function updateHeader() {
+            const profile = profiles.find(p => p.id === activeProfile);
+            if (profile) {
+                const initials = profile.name.split(' ').map(n => n[0]).join('').toUpperCase();
+                document.getElementById('headerAvatar').textContent = initials;
+                document.getElementById('headerProfileName').textContent = profile.name;
+            } else {
+                document.getElementById('headerAvatar').textContent = '?';
+                document.getElementById('headerProfileName').textContent = 'Select Profile';
+            }
+        }
+
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+
+        function loadTestParameters() {
+            const testType = document.getElementById('testType').value;
+            const container = document.getElementById('testParameters');
+            
+            if (!testType) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            const testDef = testDefinitions[testType];
+            container.innerHTML = '<h3 style="grid-column: 1/-1; margin: 1rem 0;">' + testDef.name + ' Parameters</h3>';
+            
+            Object.keys(testDef.parameters).forEach(key => {
+                const param = testDef.parameters[key];
+                container.innerHTML += `
+                    <div class="parameter-item" id="param_${key}">
+                        <div class="parameter-header">
+                            <span class="parameter-name">${param.name}</span>
+                        </div>
+                        <div class="parameter-range">Normal: ${param.range}</div>
+                        <input type="number" step="0.01" id="value_${key}" 
+                               placeholder="Enter value" 
+                               onchange="checkParameterValue('${key}', '${testType}')">
+                        <small style="color: var(--text-light);">Unit: ${param.unit}</small>
+                    </div>
+                `;
+            });
+        }
+
+        function checkParameterValue(paramKey, testType) {
+            const input = document.getElementById('value_' + paramKey);
+            const container = document.getElementById('param_' + paramKey);
+            const value = parseFloat(input.value);
+            
+            if (!value) {
+                container.classList.remove('normal', 'abnormal');
+                return;
+            }
+            
+            const param = testDefinitions[testType].parameters[paramKey];
+            const range = param.range;
+            
+            // Simple range checking (this is basic - you can make it more sophisticated)
+            const isNormal = checkIfNormal(value, range);
+            
+            if (isNormal) {
+                container.classList.add('normal');
+                container.classList.remove('abnormal');
+            } else {
+                container.classList.add('abnormal');
+                container.classList.remove('normal');
+            }
+        }
+
+        function checkIfNormal(value, range) {
+            // Basic range checking - can be improved
+            const rangeMatch = range.match(/(\d+\.?\d*)-(\d+\.?\d*)/);
+            if (rangeMatch) {
+                const min = parseFloat(rangeMatch[1]);
+                const max = parseFloat(rangeMatch[2]);
+                return value >= min && value <= max;
+            }
+            
+            const lessThanMatch = range.match(/<(\d+\.?\d*)/);
+            if (lessThanMatch) {
+                return value < parseFloat(lessThanMatch[1]);
+            }
+            
+            const greaterThanMatch = range.match(/>(\d+\.?\d*)/);
+            if (greaterThanMatch) {
+                return value > parseFloat(greaterThanMatch[1]);
+            }
+            
+            return true; // If can't parse, assume normal
+        }
+
+        function saveTest(event) {
+            event.preventDefault();
+            
+            const testType = document.getElementById('testType').value;
+            const testDate = document.getElementById('testDate').value;
+            const testDef = testDefinitions[testType];
+            
+            const parameters = {};
+            let normalCount = 0;
+            let abnormalCount = 0;
+            
+            Object.keys(testDef.parameters).forEach(key => {
+                const input = document.getElementById('value_' + key);
+                if (input && input.value) {
+                    parameters[key] = parseFloat(input.value);
+                    const isNormal = checkIfNormal(parameters[key], testDef.parameters[key].range);
+                    if (isNormal) normalCount++;
+                    else abnormalCount++;
+                }
+            });
+            
+            const test = {
+                id: Date.now().toString(),
+                type: testType,
+                typeName: testDef.name,
+                date: testDate,
+                parameters: parameters,
+                normalCount: normalCount,
+                abnormalCount: abnormalCount
+            };
+            
+            // Handle file upload
+            const fileInput = document.getElementById('testReport');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    test.report = e.target.result;
+                    saveTestToStorage(test);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveTestToStorage(test);
+            }
+        }
+
+        function saveTestToStorage(test) {
+            if (!tests[activeProfile]) {
+                tests[activeProfile] = [];
+            }
+            tests[activeProfile].push(test);
+            localStorage.setItem('healthTests', JSON.stringify(tests));
+            
+            closeModal('addTestModal');
+            updateDashboard();
+            loadHistory();
+            alert('Test saved successfully!');
+        }
+
+        function updateDashboard() {
+            if (!activeProfile) {
+                document.getElementById('totalTests').textContent = '0';
+                document.getElementById('monthTests').textContent = '0';
+                document.getElementById('recentTests').innerHTML = '<div class="empty-state"><p>No tests recorded yet</p></div>';
+                return;
+            }
+            
+            const profileTests = tests[activeProfile] || [];
+            document.getElementById('totalTests').textContent = profileTests.length;
+            
+            // Count this month's tests
+            const now = new Date();
+            const thisMonth = profileTests.filter(t => {
+                const testDate = new Date(t.date);
+                return testDate.getMonth() === now.getMonth() && 
+                       testDate.getFullYear() === now.getFullYear();
+            }).length;
+            document.getElementById('monthTests').textContent = thisMonth;
+            
+            // Show recent tests
+            const recentTests = profileTests.slice(-5).reverse();
+            const container = document.getElementById('recentTests');
+            
+            if (recentTests.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No tests recorded yet</p></div>';
+                return;
+            }
+            
+            container.innerHTML = recentTests.map(test => `
+                <div class="test-item" onclick="viewTest('${test.id}')">
+                    <div class="test-header">
+                        <div class="test-name">${test.typeName}</div>
+                        <div class="test-date">${formatDate(test.date)}</div>
+                    </div>
+                    <div class="test-summary">
+                        <span class="test-badge badge-success">${test.normalCount} Normal</span>
+                        <span class="test-badge badge-danger">${test.abnormalCount} Abnormal</span>
+                    </div>
+                </div>
+            `).join('');
+            
+            updateDashboardReminders();
+        }
+
+        function updateDashboardReminders() {
+            const upcomingReminders = reminders.filter(r => {
+                if (r.profileId !== activeProfile) return false;
+                const reminderDate = new Date(r.date);
+                const today = new Date();
+                const diffDays = Math.ceil((reminderDate - today) / (1000 * 60 * 60 * 24));
+                return diffDays >= 0 && diffDays <= 7;
+            });
+            
+            document.getElementById('upcomingReminders').textContent = upcomingReminders.length;
+            
+            const container = document.getElementById('dashboardReminders');
+            if (upcomingReminders.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-light);">No upcoming reminders</p>';
+                return;
+            }
+            
+            container.innerHTML = upcomingReminders.slice(0, 3).map(reminder => {
+                const daysUntil = Math.ceil((new Date(reminder.date) - new Date()) / (1000 * 60 * 60 * 24));
+                return `
+                    <div class="reminder-item upcoming">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${reminder.testName}</strong>
+                                <div style="color: var(--text-light); font-size: 0.875rem;">
+                                    ${formatDate(reminder.date)} (in ${daysUntil} days)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadHistory() {
+            if (!activeProfile) {
+                document.getElementById('historyList').innerHTML = '<div class="empty-state"><p>Please select a profile first</p></div>';
+                return;
+            }
+            
+            filterHistory();
+        }
+
+        function filterHistory() {
+            const profileTests = tests[activeProfile] || [];
+            const searchTerm = document.getElementById('searchTests').value.toLowerCase();
+            const filterType = document.getElementById('filterTestType').value;
+            const fromDate = document.getElementById('filterFromDate').value;
+            const toDate = document.getElementById('filterToDate').value;
+            
+            let filtered = profileTests.filter(test => {
+                if (searchTerm && !test.typeName.toLowerCase().includes(searchTerm)) return false;
+                if (filterType && test.type !== filterType) return false;
+                if (fromDate && test.date < fromDate) return false;
+                if (toDate && test.date > toDate) return false;
+                return true;
+            });
+            
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            const container = document.getElementById('historyList');
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No tests found</p></div>';
+                return;
+            }
+            
+            container.innerHTML = filtered.map(test => `
+                <div class="test-item" onclick="viewTest('${test.id}')">
+                    <div class="test-header">
+                        <div class="test-name">${test.typeName}</div>
+                        <div class="test-date">${formatDate(test.date)}</div>
+                    </div>
+                    <div class="test-summary">
+                        <span class="test-badge badge-success">${test.normalCount} Normal</span>
+                        <span class="test-badge badge-danger">${test.abnormalCount} Abnormal</span>
+                        <button class="btn btn-danger btn-sm" onclick="deleteTest(event, '${test.id}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewTest(testId) {
+            const test = (tests[activeProfile] || []).find(t => t.id === testId);
+            if (!test) return;
+            
+            const testDef = testDefinitions[test.type];
+            let content = `
+                <div><strong>Test:</strong> ${test.typeName}</div>
+                <div><strong>Date:</strong> ${formatDate(test.date)}</div>
+                <div style="margin-top: 1.5rem;">
+                    <h3>Parameters</h3>
+                    <div class="parameter-grid" style="margin-top: 1rem;">
+            `;
+            
+            Object.keys(test.parameters).forEach(key => {
+                const param = testDef.parameters[key];
+                const value = test.parameters[key];
+                const isNormal = checkIfNormal(value, param.range);
+                content += `
+                    <div class="parameter-item ${isNormal ? 'normal' : 'abnormal'}">
+                        <div class="parameter-header">
+                            <span class="parameter-name">${param.name}</span>
+                            <span style="color: ${isNormal ? 'var(--success)' : 'var(--danger)'};">
+                                ${isNormal ? '✓' : '⚠'}
+                            </span>
+                        </div>
+                        <div class="parameter-range">Normal: ${param.range}</div>
+                        <div style="font-size: 1.25rem; font-weight: bold; margin: 0.5rem 0;">
+                            ${value} ${param.unit}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            content += '</div></div>';
+            
+            if (test.report) {
+                content += `
+                    <div style="margin-top: 1.5rem;">
+                        <h3>Uploaded Report</h3>
+                        <img src="${test.report}" style="max-width: 100%; margin-top: 1rem; border-radius: 0.5rem;">
+                    </div>
+                `;
+            }
+            
+            document.getElementById('viewTestTitle').textContent = test.typeName + ' Details';
+            document.getElementById('viewTestContent').innerHTML = content;
+            showModal('viewTestModal');
+        }
+
+        function deleteTest(event, testId) {
+            event.stopPropagation();
+            if (confirm('Are you sure you want to delete this test?')) {
+                tests[activeProfile] = tests[activeProfile].filter(t => t.id !== testId);
+                localStorage.setItem('healthTests', JSON.stringify(tests));
+                loadHistory();
+                updateDashboard();
+            }
+        }
+
+        function saveReminder(event) {
+            event.preventDefault();
+            
+            const reminder = {
+                id: Date.now().toString(),
+                profileId: activeProfile,
+                testName: document.getElementById('reminderTest').value,
+                date: document.getElementById('reminderDate').value,
+                frequency: document.getElementById('reminderFrequency').value
+            };
+            
+            reminders.push(reminder);
+            localStorage.setItem('healthReminders', JSON.stringify(reminders));
+            
+            closeModal('addReminderModal');
+            loadReminders();
+            updateDashboard();
+        }
+
+        function loadReminders() {
+            if (!activeProfile) {
+                document.getElementById('remindersList').innerHTML = '<div class="empty-state"><p>Please select a profile first</p></div>';
+                return;
+            }
+            
+            const profileReminders = reminders.filter(r => r.profileId === activeProfile);
+            profileReminders.sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            const container = document.getElementById('remindersList');
+            if (profileReminders.length === 0) {
+                container.innerHTML = '<div class="empty-state"><p>No reminders set</p></div>';
+                return;
+            }
+            
+            const today = new Date();
+            container.innerHTML = profileReminders.map(reminder => {
+                const reminderDate = new Date(reminder.date);
+                const diffDays = Math.ceil((reminderDate - today) / (1000 * 60 * 60 * 24));
+                const isOverdue = diffDays < 0;
+                const isUpcoming = diffDays >= 0 && diffDays <= 7;
+                
+                return `
+                    <div class="reminder-item ${isOverdue ? 'overdue' : isUpcoming ? 'upcoming' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <strong>${reminder.testName}</strong>
+                                <div style="color: var(--text-light); font-size: 0.875rem;">
+                                    ${formatDate(reminder.date)} 
+                                    ${isOverdue ? '(Overdue by ' + Math.abs(diffDays) + ' days)' : 
+                                      isUpcoming ? '(in ' + diffDays + ' days)' : ''}
+                                    • ${reminder.frequency}
+                                </div>
+                            </div>
+                            <button class="btn btn-danger btn-sm" onclick="deleteReminder('${reminder.id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteReminder(reminderId) {
+            if (confirm('Are you sure you want to delete this reminder?')) {
+                reminders = reminders.filter(r => r.id !== reminderId);
+                localStorage.setItem('healthReminders', JSON.stringify(reminders));
+                loadReminders();
+                updateDashboard();
+            }
+        }
+
+        function populateTestTypeFilter() {
+            const select = document.getElementById('filterTestType');
+            Object.keys(testDefinitions).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = testDefinitions[key].name;
+                select.appendChild(option);
+            });
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function exportData() {
+            const data = {
+                profiles: profiles,
+                tests: tests,
+                reminders: reminders,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'health_monitor_backup_' + new Date().toISOString().split('T')[0] + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData() {
+            const file = document.getElementById('importFile').files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (confirm('This will replace all existing data. Continue?')) {
+                        profiles = data.profiles || [];
+                        tests = data.tests || {};
+                        reminders = data.reminders || [];
+                        
+                        localStorage.setItem('healthProfiles', JSON.stringify(profiles));
+                        localStorage.setItem('healthTests', JSON.stringify(tests));
+                        localStorage.setItem('healthReminders', JSON.stringify(reminders));
+                        
+                        if (profiles.length > 0) {
+                            activeProfile = profiles[0].id;
+                            localStorage.setItem('activeProfile', activeProfile);
+                        }
+                        
+                        location.reload();
+                    }
+                } catch (error) {
+                    alert('Error importing data. Please check the file format.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function exportPDF() {
+            alert('PDF export feature: This would generate a comprehensive PDF report with all test data. For a full implementation, you would need a PDF library like jsPDF.');
+        }
+
+        // Register service worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
